@@ -29,6 +29,7 @@ public class Library {
         return bookFound; // Return true if book is found, false otherwise
     }
 
+    // Method to add books
     static Book addBooks() {
         // Prompt the user for book details
         System.out.println("Enter book title: ");
@@ -85,6 +86,91 @@ public class Library {
         return null; // Return null if the book is not added
     }
 
+    // Method to borrow books
+    static void borrowBooks() {
+        // Prompt the user for book title
+        System.out.println("Enter book title to borrow: ");
+        String title = scanner.nextLine().trim().toLowerCase();
+
+        System.out.println("Enter quantity to borrow: ");
+        int quantity = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character
+
+        // Check if the book exists
+        final boolean bookFound = searchBookByTitle(title);
+
+        if (bookFound) {
+            // Loop through the books list to find the existing book
+            for (Book book : books) {
+                if (book.title.equalsIgnoreCase(title)) {
+                    try {
+                        // If the book exists, remove quantity
+                        book.removeQuantity(quantity);
+                        System.out.println("Book borrowed successfully! 📚");
+                        System.out.println("Book Title: " + book.title);
+                        System.out.println("Book Author: " + book.author);
+                        System.out.println("Book Quantity Borrowed: " + quantity);
+                        System.out.println("Remaining Quantity: " + book.quantity);
+                        System.out.println("Thank you for borrowing the book! 😊");
+                        displayMenu(); // Call the method again to display the menu
+                        break; // Exit the loop if the book is found
+                    } catch (IllegalArgumentException e) {
+                        System.out.println(e.getMessage());
+                        displayMenu(); // Call the method again for valid input
+                        break; // Exit the loop if the book is found
+                    }
+                }
+            }
+        } else {
+            System.out.println("Book not found! ❌");
+            System.out.println("Please check the title and try again.");
+            displayMenu(); // Call the method again for valid input
+        }
+    }
+
+    // Method to return books
+    static void returnBooks() {
+        // Prompt the user for book title
+        System.out.println("Enter book title to return: ");
+        String title = scanner.nextLine().trim().toLowerCase();
+
+        System.out.println("Enter quantity to return: ");
+        int quantity = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character
+
+        // Check if the book exists
+        final boolean bookFound = searchBookByTitle(title);
+
+        if (bookFound) {
+            // Loop through the books list to find the existing book
+            for (Book book : books) {
+                if (book.title.equalsIgnoreCase(title)) {
+                    try {
+                        // If the book exists, add quantity
+                        book.addQuantity(quantity);
+                        System.out.println("Book returned successfully! 📚");
+                        System.out.println("Book Title: " + book.title);
+                        System.out.println("Book Author: " + book.author);
+                        System.out.println("Book Quantity Returned: " + quantity);
+                        System.out.println("Total Quantity: " + book.quantity);
+                        System.out.println("Thank you for returning the book! 😊");
+                        displayMenu(); // Call the method again to display the menu
+                        break; // Exit the loop if the book is found
+                    } catch (IllegalArgumentException e) {
+                        System.out.println(e.getMessage());
+                        displayMenu(); // Call the method again for valid input
+                        break; // Exit the loop if the book is found
+                    }
+                }
+            }
+        } else {
+            System.out.println("Book not found! ❌");
+            System.out.println("Please check the title and try again.");
+            displayMenu(); // Call the method again for valid input
+        }
+    }
+
+    // Method to exit the library system
     static void exitLibrary() {
         // print an exit message with emoji attached
         System.out.println("Thank you for using the Library Management System! 📚");
@@ -121,11 +207,11 @@ public class Library {
                 displayMenu(); // Call the method again to display the menu
                 break;
             case "b":
-                System.out.println("Removing a book...");
+                borrowBooks();
                 // Remove book logic here
                 break;
             case "r":
-                System.out.println("Searching for a book...");
+                returnBooks();
                 // Search book logic here
                 break;
             case "d":
@@ -159,8 +245,8 @@ public class Library {
         System.out.println("          Library Menu");
         System.out.println("===================================");
         System.out.println("a.) Add Book");
-        System.out.println("b.) Remove Book");
-        System.out.println("r.) Search Book");
+        System.out.println("b.) Borrow Book");
+        System.out.println("r.) Return Book");
         System.out.println("d.) Display All Books");
         System.out.println("q.) Exit");
 
@@ -169,12 +255,22 @@ public class Library {
     }
 
     static void startLibrary() {
+        // Library welcome header with emoji
+        System.out.println("===============================================");
+        System.out.println("Welcome to the 📚 Library Management System 📚");
+        System.out.println("===============================================");
         // Start the library system
         displayMenu();
     }
 
     public static void main(String[] args) {
-        startLibrary();
+        try {
+            startLibrary();
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred! ❌");
+            // displayMenu();
+        }
+
     }
 }
 
