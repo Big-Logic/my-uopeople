@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Library {
@@ -170,6 +171,33 @@ public class Library {
         }
     }
 
+    // Method to display all books
+    static void displayAllBooks() {
+        // Check if the books list is empty
+        if (books.isEmpty()) {
+            System.out.println("No books available in the library! ❌");
+        } else {
+            // Display all books in the library
+            System.out.println("Displaying all books in the library:");
+            System.out.println("===================================");
+            System.out.println("          Library Books");
+            System.out.println("===================================");
+            for (Book book : books) {
+                System.out.println("Title: " + book.title);
+                System.out.println("Author: " + book.author);
+                System.out.println("Quantity: " + book.quantity);
+                System.out.println("-----------------------------");
+            }
+            System.out.println("===================================");
+            System.out.println("End of book list.");
+            System.out.println("===================================");
+        }
+        System.out.println("Press Enter to continue...");
+        scanner.nextLine(); // Wait for user input
+        clearScreen(); // Clear the screen after displaying the books
+        displayMenu(); // Call the method again to display the menu
+    }
+
     // Method to exit the library system
     static void exitLibrary() {
         // print an exit message with emoji attached
@@ -208,15 +236,12 @@ public class Library {
                 break;
             case "b":
                 borrowBooks();
-                // Remove book logic here
                 break;
             case "r":
                 returnBooks();
-                // Search book logic here
                 break;
             case "d":
-                System.out.println("Displaying all books...");
-                // Display all books logic here
+                displayAllBooks();
                 break;
             case "q":
                 exitLibrary();
@@ -257,20 +282,26 @@ public class Library {
     static void startLibrary() {
         // Library welcome header with emoji
         System.out.println("===============================================");
-        System.out.println("Welcome to the 📚 Library Management System 📚");
+        System.out.println("        📚 Library Management System 📚");
         System.out.println("===============================================");
         // Start the library system
         displayMenu();
     }
 
     public static void main(String[] args) {
-        try {
-            startLibrary();
-        } catch (Exception e) {
-            System.out.println("An unexpected error occurred! ❌");
-            // displayMenu();
+        while (true) {
+            try {
+                startLibrary();
+            } catch (InputMismatchException e) {
+                System.out.println("An unexpected error occurred! ❌");
+                System.out.println("Please be sure you are entering a number in the quantity field.");
+                scanner.nextLine(); // Consume the invalid input
+                System.out.println("Press Enter to return to the menu...");
+                scanner.nextLine(); // Wait for user input
+            } catch (Exception e) {
+                System.out.println("An unexpected error occurred! ❌");
+            }
         }
-
     }
 }
 
