@@ -16,6 +16,16 @@ public class StudentRecordSystem {
         System.out.flush();
     }
 
+    // Private method to display a message with a delay
+    private void displayMessageWithDelay(String message, int delay) {
+        System.out.println(message);
+        try {
+            Thread.sleep(delay); // Delay in milliseconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     // Private methods for each operation
     private void addStudent() {
         System.out.println("Enter student first name:");
@@ -25,14 +35,8 @@ public class StudentRecordSystem {
 
         int studentId = ++id; // Increment ID for each new student
 
-        System.out.println("Adding student...");
-
         // Simulate a delay for adding the student
-        try {
-            Thread.sleep(1000); // 2 seconds delay
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        displayMessageWithDelay("Adding student...", 2000);
 
         // Create a new student object and add it to the list
         Student student = new Student(studentId, firstName, lastName);
@@ -42,7 +46,7 @@ public class StudentRecordSystem {
         System.out.println("==========================");
         System.out.println("    Student Details");
         System.out.println("==========================");
-        System.out.println("Student ID: " + student.id);
+        System.out.println("Student ID: " + student.getId());
         System.out.println("Student First Name: " + student.firstName);
         System.out.println("Student Last Name: " + student.lastName);
         System.out.println("Student Grade: " + student.grade);
@@ -60,10 +64,107 @@ public class StudentRecordSystem {
         // Implementation here
     }
 
+    private void handleUpdateStudentMenuOption(Student studentToUpdate) {
+        // Display a menu to select which detail to update
+        System.out.println("Select detail to update:");
+        System.out.println("f.) First Name");
+        System.out.println("l.) Last Name");
+        System.out.println("g.) Grade");
+        System.out.println("a.) All");
+        System.out.println("c.) Cancel");
+        // Get the user's choice
+        String choice = scanner.nextLine().trim().toLowerCase();
+
+        switch (choice) {
+            case "f":
+                System.out.println("Enter new first name:");
+                String newFirstName = scanner.nextLine();
+                studentToUpdate.firstName = newFirstName;
+                break;
+            case "l":
+                System.out.println("Enter new last name:");
+                String newLastName = scanner.nextLine();
+                studentToUpdate.lastName = newLastName;
+                break;
+            case "g":
+                System.out.println("Enter new grade:");
+                double newGrade = scanner.nextDouble();
+                studentToUpdate.grade = newGrade;
+                break;
+            case "a":
+                System.out.println("Enter new first name:");
+                String allNewFirstName = scanner.nextLine();
+                System.out.println("Enter new last name:");
+                String allNewLastName = scanner.nextLine();
+                System.out.println("Enter new grade:");
+                double allNewGrade = scanner.nextDouble();
+                studentToUpdate.firstName = allNewFirstName;
+                studentToUpdate.lastName = allNewLastName;
+                studentToUpdate.grade = allNewGrade;
+                scanner.nextLine(); // Consume the newline character
+                break;
+            case "c":
+                System.out.println("Update cancelled.");
+                return; // Exit the method if the user chooses to cancel
+            default:
+                System.out.println("❌ Invalid option. Please select a valid option.");
+                return; // Exit the method if the choice is invalid
+        }
+
+        // Display the updated student details
+        System.out.println("Student updated successfully!");
+        System.out.println("==========================");
+        System.out.println("    Updated Student Details");
+        System.out.println("==========================");
+        System.out.println("Student ID: " + studentToUpdate.getId());
+        System.out.println("Student First Name: " + studentToUpdate.firstName);
+        System.out.println("Student Last Name: " + studentToUpdate.lastName);
+        System.out.println("Student Grade: " + studentToUpdate.grade);
+        System.out.println("==========================");
+    }
+
     private void updateStudent() {
-        // Code to update a student
-        System.out.println("Updating a student...");
-        // Implementation here
+
+        // Prompt the user for student ID
+        System.out.println("Enter student ID to update:");
+        int studentId = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character
+
+        // delay for 1 seconds
+        displayMessageWithDelay("Searching for student...", 1000);
+
+        // assign a boolean variable to check if the student exists
+        boolean studentExists = false;
+
+        // assign a variable to hold the student object
+        Student studentToUpdate = null;
+
+        // Loop through the list of students to check if the ID exists
+        for (Student student : students) {
+            if (student.getId() == studentId) {
+                studentExists = true;
+                studentToUpdate = student;
+                break;
+
+            }
+        }
+
+        // If the student ID exists, prompt for new details
+        if (studentExists) {
+
+            // Get the user's choice
+            handleUpdateStudentMenuOption(studentToUpdate);
+
+        } else {
+            // If the student ID does not exist, display an error message
+            System.out.println("❌ Student ID not found. Please try again.");
+        }
+
+        System.out.println("Hit enter to continue...");
+        scanner.nextLine(); // Wait for user to hit enter
+        displayMessageWithDelay("loading dashboard", 1000);
+        clearConsole(); // Clear the console
+        displayMenu(); // Show the menu again
     }
 
     private void deleteStudent() {
@@ -139,10 +240,20 @@ public class StudentRecordSystem {
 }
 
 class Student {
-    int id;
+    private int id;
     String firstName;
     String lastName;
     double grade = 0.00;
+
+    // Public method to get student ID
+    public int getId() {
+        return id;
+    }
+
+    // Public method to set student ID
+    public void setId(int studentId) {
+        id = studentId;
+    }
 
     // Method to update student
     Student updateStudent() {
@@ -152,8 +263,10 @@ class Student {
 
     // Constructor
     Student(int studentId, String studentFirstName, String studentLastName) {
-        id = studentId;
+
         firstName = studentFirstName;
         lastName = studentLastName;
+
+        setId(studentId);
     }
 }
