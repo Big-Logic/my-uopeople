@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class StudentRecordSystem {
@@ -29,9 +30,9 @@ public class StudentRecordSystem {
     // Private methods for each operation
     private void addStudent() {
         System.out.println("Enter student first name:");
-        String firstName = scanner.nextLine();
+        String firstName = scanner.nextLine().trim();
         System.out.println("Enter student last name:");
-        String lastName = scanner.nextLine();
+        String lastName = scanner.nextLine().trim();
 
         int studentId = ++id; // Increment ID for each new student
 
@@ -58,12 +59,82 @@ public class StudentRecordSystem {
         displayMenu(); // Show the menu again
     }
 
-    private void viewStudents() {
-        // Code to view all students
-        System.out.println("Viewing all students...");
-        // Implementation here
+    // Private method to search for a student by ID
+    private void searchStudentById() {
+        // Prompt the user for student ID
+        System.out.println("Enter student ID to search:");
+        int studentId = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character
+        // Simulate a delay for searching
+        displayMessageWithDelay("Searching for student...", 1000);
+        // Loop through the list of students to find the student with the given ID
+
+        // boolean variable to check if the student exists
+        boolean studentExists = false;
+
+        // Student object to hold the student
+        Student studentToDisplay = null;
+
+        for (Student student : students) {
+            if (student.getId() == studentId) {
+                // If found, display the student details
+                studentExists = true;
+                studentToDisplay = student;
+                break;
+            }
+            ;
+        }
+        ;
+        // If the student ID exists, display the details
+        if (studentExists) {
+            // If found, display the student details
+            System.out.println("==========================");
+            System.out.println("    Student Details");
+            System.out.println("==========================");
+            System.out.println("Student ID: " + studentToDisplay.getId());
+            System.out.println("Student First Name: " + studentToDisplay.firstName);
+            System.out.println("Student Last Name: " + studentToDisplay.lastName);
+            System.out.println("Student Grade: " + studentToDisplay.grade);
+            System.out.println("==========================");
+        } else {
+            // If not found, display an error message
+            System.out.println("❌ Student ID not found. Please try again.");
+        }
+        System.out.println("Hit enter to continue...");
+        scanner.nextLine(); // Wait for user to hit enter
+        displayMessageWithDelay("loading dashboard", 1000);
+        clearConsole(); // Clear the console
+        displayMenu(); // Show the menu again
     }
 
+    // Private method to view all students
+    private void viewStudents() {
+        // Check if there are any students in the list
+        if (students.isEmpty()) {
+            System.out.println("No students found.");
+        } else {
+            // Display the list of students
+            // Print the header
+            System.out.println("==========================");
+            System.out.println("    List of Students");
+            System.out.println("==========================");
+
+            for (Student student : students) {
+                System.out.println("ID: " + student.getId() + ", Name: " + student.firstName + " " + student.lastName
+                        + ", Grade: " + student.grade);
+                // Print a separator line
+                System.out.println("--------------------------");
+            }
+            System.out.println("==========================");
+        }
+
+        System.out.println("Hit enter to continue...");
+        scanner.nextLine(); // Wait for user to hit enter
+        clearConsole(); // Clear the console
+        displayMenu(); // Show the menu again
+    }
+
+    // Private method to handle updating student details
     private void handleUpdateStudentMenuOption(Student studentToUpdate) {
         // Display a menu to select which detail to update
         System.out.println("Select detail to update:");
@@ -89,6 +160,12 @@ public class StudentRecordSystem {
             case "g":
                 System.out.println("Enter new grade:");
                 double newGrade = scanner.nextDouble();
+                scanner.nextLine(); // Consume the newline character
+                if (newGrade < 0 || newGrade > 100) {
+                    System.out.println("❌ Invalid grade. Please enter a grade between 0 and 100.");
+                    return; // Exit the method if the grade is invalid
+                }
+                // Update the student's grade
                 studentToUpdate.grade = newGrade;
                 break;
             case "a":
@@ -98,9 +175,13 @@ public class StudentRecordSystem {
                 String allNewLastName = scanner.nextLine();
                 System.out.println("Enter new grade:");
                 double allNewGrade = scanner.nextDouble();
+                studentToUpdate.grade = allNewGrade;
+                if (allNewGrade < 0 || allNewGrade > 100) {
+                    System.out.println("❌ Invalid grade. Please enter a grade between 0 and 100.");
+                    return; // Exit the method if the grade is invalid
+                }
                 studentToUpdate.firstName = allNewFirstName;
                 studentToUpdate.lastName = allNewLastName;
-                studentToUpdate.grade = allNewGrade;
                 scanner.nextLine(); // Consume the newline character
                 break;
             case "c":
@@ -123,6 +204,7 @@ public class StudentRecordSystem {
         System.out.println("==========================");
     }
 
+    // Private method to update a student
     private void updateStudent() {
 
         // Prompt the user for student ID
@@ -167,15 +249,9 @@ public class StudentRecordSystem {
         displayMenu(); // Show the menu again
     }
 
-    private void deleteStudent() {
-        // Code to delete a student
-        System.out.println("Deleting a student...");
-        // Implementation here
-    }
-
     private void exitSystem() {
-        // Code to exit the system
-        System.out.println("Exiting the system...");
+        // Simulate a delay for exiting
+        displayMessageWithDelay("Exiting the system...", 1000);
         scanner.close();
         System.exit(0);
     }
@@ -190,11 +266,11 @@ public class StudentRecordSystem {
             case "v":
                 viewStudents();
                 break;
+            case "s":
+                searchStudentById();
+                break;
             case "u":
                 updateStudent();
-                break;
-            case "d":
-                deleteStudent();
                 break;
             case "e":
                 exitSystem();
@@ -214,8 +290,8 @@ public class StudentRecordSystem {
         System.out.println("===================================");
         System.out.println("a.) Add Student");
         System.out.println("v.) View Students");
+        System.out.println("s.) Search Student");
         System.out.println("u.) Update Student");
-        System.out.println("d.) Delete Student");
         System.out.println("e.) Exit");
         System.out.println("===================================");
         System.out.println("Please select an option (a | v | u | d | e): ");
@@ -225,7 +301,18 @@ public class StudentRecordSystem {
     }
 
     public void startSystem() {
-        displayMenu();
+        while (true) {
+            try {
+                displayMenu();
+            } catch (InputMismatchException e) {
+                System.out.println("An unexpected error occurred! ❌");
+                scanner.nextLine(); // Consume the invalid input
+                System.out.println("Press Enter to return to the menu...");
+                scanner.nextLine(); // Wait for user input
+            } catch (Exception e) {
+                System.out.println("An unexpected error occurred! ❌");
+            }
+        }
     }
 
     // Constructor
