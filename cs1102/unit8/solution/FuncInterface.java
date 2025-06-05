@@ -70,5 +70,39 @@ public class FuncInterface {
 
         System.out.println("\nEmployees above age " + ageThreshold + ":");
         filteredEmployees.forEach(e -> System.out.println(e.getName() + " (" + e.getAge() + ")"));
+
+        // 6. Sort employees by salary (descending)
+        List<Employee> sortedBySalary = employees.stream()
+                .sorted(Comparator.comparingDouble(Employee::getSalary).reversed())
+                .collect(Collectors.toList());
+
+        System.out.println("\nEmployees sorted by salary (high to low):");
+        sortedBySalary.forEach(e -> System.out.println(e.getName() + " - $" + e.getSalary()));
+
+        // 7. Find employee(s) with the highest and lowest salary
+        OptionalDouble maxSalaryOpt = employees.stream()
+                .mapToDouble(Employee::getSalary)
+                .max();
+        OptionalDouble minSalaryOpt = employees.stream()
+                .mapToDouble(Employee::getSalary)
+                .min();
+
+        if (maxSalaryOpt.isPresent() && minSalaryOpt.isPresent()) {
+            double maxSalary = maxSalaryOpt.getAsDouble();
+            double minSalary = minSalaryOpt.getAsDouble();
+
+            List<Employee> highestPaid = employees.stream()
+                    .filter(e -> e.getSalary() == maxSalary)
+                    .collect(Collectors.toList());
+            List<Employee> lowestPaid = employees.stream()
+                    .filter(e -> e.getSalary() == minSalary)
+                    .collect(Collectors.toList());
+
+            System.out.println("\nEmployee(s) with the highest salary ($" + maxSalary + "):");
+            highestPaid.forEach(e -> System.out.println(e.getName() + " - " + e.getDepartment()));
+
+            System.out.println("\nEmployee(s) with the lowest salary ($" + minSalary + "):");
+            lowestPaid.forEach(e -> System.out.println(e.getName() + " - " + e.getDepartment()));
+        }
     }
 }
